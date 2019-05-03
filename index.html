@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+</head>
+<body>
+  <header><h3>Movie Search API</h3></header>
+  <main>
+    <div>
+      <input type="text" id="search" placeholder="Search for movie..." required>
+      <input type="number" id="year" placeholder="Year...">  
+      <button>Search</button>
+    </div>
+    <div id="result">
+
+    </div>
+  </main>
+  <script>
+    const btn = document.querySelector('button');
+    const searchInput = document.querySelector('#search');
+    const searchYear = document.querySelector('#year');
+
+    const result = document.querySelector('#result');
+    const paraPoster = document.createElement('p');
+    const img = document.createElement('img');
+    const paraTitle = document.createElement('p');
+    const paraYear = document.createElement('p');
+    const paraDirector = document.createElement('p');
+    const paraActors = document.createElement('p');
+    const paraImdbRating = document.createElement('p');
+    const paraWebsite = document.createElement('p');
+    const website = document.createTextNode('Website: ')
+    const link = document.createElement('a');
+
+    const paraNoResult = document.createElement('p');
+    
+    // let url = 'http://www.omdbapi.com/?i=tt3896198&apikey=fe06f50a';
+    let baseUrl = 'http://www.omdbapi.com/?apikey=fe06f50a&t=';
+    let url;
+
+    btn.addEventListener('click', () => {
+      url = baseUrl + searchInput.value + '&y=' + searchYear.value;
+      searchInput.value = '';
+      searchYear.value = '';
+      fetch(url).then(response => {
+        return response.json();
+      }).then(json => {
+        console.log(json);
+        displayResult(json);
+      })
+    })
+
+    function displayResult(json) {
+      while (result.firstChild) {
+        result.removeChild(result.firstChild);
+      }
+      while (paraWebsite.firstChild) {
+        paraWebsite.removeChild(paraWebsite.firstChild);
+      }
+      while (paraPoster.firstChild) {
+        paraPoster.removeChild(paraPoster.firstChild);
+      }
+
+      if (!json.Title) {
+        paraNoResult.textContent = 'No result.'
+        result.appendChild(paraNoResult);
+        return;
+      }
+
+      img.src = json.Poster;
+      img.alt = 'The poster of ' + json.Title
+      paraTitle.textContent = 'Movie Title: ' + json.Title;
+      paraYear.textContent = 'Year: ' + json.Year;
+      paraDirector.textContent = 'Director: ' + json.Director;
+      paraActors.textContent = 'Actors: ' + json.Actors;
+      paraImdbRating.textContent = 'IMDB rating: ' + json.imdbRating;
+      link.href = json.Website;
+      link.textContent = json.Website;
+      paraPoster.appendChild(img);
+      result.appendChild(paraPoster);
+      result.appendChild(paraTitle);
+      result.appendChild(paraYear);
+      result.appendChild(paraDirector);
+      result.appendChild(paraActors);
+      result.appendChild(paraImdbRating);
+      result.appendChild(paraWebsite);
+      paraWebsite.appendChild(website);
+      paraWebsite.appendChild(link);
+    }
+
+  </script>
+</body>
+</html>
